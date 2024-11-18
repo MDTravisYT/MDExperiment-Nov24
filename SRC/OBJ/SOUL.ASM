@@ -80,10 +80,10 @@ SOUL:
 		move.w	SOUL.DIR(A0),D0
 		btst	#1,	OBJ.ACTION(A0)
 		beq.s	@y
-		add.w	D0,OBJ.X(A0)
+		sub.w	D0,HSCROLLTABLE
 		JMP		_OBJECTDISPLAY
 	@y:
-		add.w	D0,OBJ.Y(A0)
+		add.w	D0,VDP_SCREENPOSY
 		JMP		_OBJECTDISPLAY
 	@wall:
 		move.b	#$A6,	D0
