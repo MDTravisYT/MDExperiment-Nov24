@@ -1,3 +1,6 @@
+SOUL.DIR	=	$20
+SOUL.TIME	=	$22
+
 SOUL:
 		MOVEQ	#0,	D0
 		MOVE.B	OBJ.ACTION(A0),	D0
@@ -7,9 +10,9 @@ SOUL:
 	@INDEX:
 		DC.W	@init-@INDEX
 		DC.W	@do-@INDEX
+		DC.W	@move-@INDEX
 	;	DC.W	@delete-@INDEX
-	;	DC.W	@delete-@INDEX
-		
+;	===================================================
 	@init:
 		ADDQ.B	#2,			OBJ.ACTION(A0)
 		MOVE.B	#$12,		OBJ.YRAD(A0)
@@ -18,35 +21,43 @@ SOUL:
 		MOVE.W	#$0,		OBJ.TILE(A0)
 		MOVE.B	#4,			OBJ.RENDERFLAGS(A0)
 		MOVE.B	#2,			OBJ.PRIORITY(A0)
+;	===================================================
+;	UP+LEFT = UP
+;	DOWN+LEFT = DOWN
+;	UP+RIGHT = UP
+;	DOWN+RIGHT = DOWN
+;	up down gets checked first, followed by left right
 
 	@do:
-		MOVEQ	#0,	D0
 		MOVEQ	#0,	D1
 		MOVE.B	JOYPAD,	D0
 	@uptst:
-		btst	#bitUp,D0
-		beq.s	@downtst
-		subi.w	#1,D1
-	@downtst:
-		btst	#bitDn,D0
-		beq.s	@lefttst
-		addi.w	#1,D1
-	@lefttst:
-		rol.l	#8,d1
-		rol.l	#8,d1
-		btst	#bitL,D0
-		beq.s	@righttst
-		subi.w	#1,D1
-	@righttst:
-		btst	#bitR,D0
+		btst	#bitUp,	D0
+		beq.s	@dntst
+		subi.w	#1,	d1
+	@dntst:
+		btst	#bitDn,	D0
 		beq.s	@apply
-		addi.w	#1,D1
+		addi.w	#1,	d1
 	@apply:
-		add.w	D1,OBJ.X(A0)
-		rol.l	#8,d1
-		rol.l	#8,d1
-		add.w	D1,OBJ.Y(A0)
+		tst.b	d1
+		beq.s	@skip
+		addi.b	#2,		OBJ.ACTION(A0)
+		move.b	#16,	SOUL.TIME(A0)
+		move.w	d1,		SOUL.DIR(A0)
+	@skip:
 		JMP		_OBJECTDISPLAY
+;	===================================================
+	@move:
+		tst.b	SOUL.TIME(A0)
+		beq.s	@end
+		subi.b	#1,	SOUL.TIME(A0)
+		move.w	SOUL.DIR(A0),D0
+		add.w	D0,OBJ.Y(A0)
+		JMP		_OBJECTDISPLAY
+	@end:
+		subi.b	#2,		OBJ.ACTION(A0)
+		rts
 		
 MAP_SOUL:
 		INCBIN	"SRC/OBJ/SOUL.MAP"
