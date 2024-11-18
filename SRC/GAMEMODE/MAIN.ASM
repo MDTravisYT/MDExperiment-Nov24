@@ -29,8 +29,8 @@ MAIN:
 	
 		MOVE.B	#$01,	(OBJSLOT00)
 		LEA		(OBJSLOT00),	A0
-		MOVE.W	#160,	OBJ.X(A0)
-		MOVE.W	#112,	OBJ.Y(A0)
+		MOVE.W	#8,	OBJ.X(A0)
+		MOVE.W	#8,	OBJ.Y(A0)
 		
 		move.b	#$81,	D0
 		jsr		PlaySound
