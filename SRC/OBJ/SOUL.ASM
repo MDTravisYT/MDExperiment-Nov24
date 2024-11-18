@@ -48,6 +48,7 @@ SOUL:
 		addi.b	#2,		OBJ.ACTION(A0)
 		move.b	#16,	SOUL.TIME(A0)
 		move.w	d1,		SOUL.DIR(A0)
+		jmp		@move
 	@skip:
 		JMP		_OBJECTDISPLAY
 	@ltst:
@@ -66,7 +67,7 @@ SOUL:
 		addi.b	#4,		OBJ.ACTION(A0)
 		move.b	#16,	SOUL.TIME(A0)
 		move.w	d1,		SOUL.DIR(A0)
-		JMP		_OBJECTDISPLAY
+	;	JMP		_OBJECTDISPLAY
 ;	===================================================
 	@move:
 		lea		POS,	A1
@@ -85,12 +86,14 @@ SOUL:
 		add.w	D0,OBJ.Y(A0)
 		JMP		_OBJECTDISPLAY
 	@wall:
-		move.b	#$A4,	D0
+		move.b	#$A6,	D0
 		jsr		PlaySound
 		MOVE.L	POSBACKUP,POS
-	@end:
 		move.b	#2,		OBJ.ACTION(A0)
 		JMP		_OBJECTDISPLAY
+	@end:
+		move.b	#2,		OBJ.ACTION(A0)
+		JMP		@do
 		
 MAP_SOUL:
 		INCBIN	"SRC/OBJ/SOUL.MAP"
