@@ -25,34 +25,50 @@
 SA0:
 
 		TDW		TIMBA0,SA0				; Voice Top Address
-		DC.B	2,2						; Base,Use Channel Total
+		DC.B	1,2						; Base,Use Channel Total
 
 		DC.B	80H,080H				; Flag,Channel
 		TDW		TABA00,SA0				; FM 1ch Table Pointer
-		DC.B	-12,000H				; Bias,Volm
-		
+		DC.B	00H,003H				; Bias,Volm
+
 		DC.B	80H,0A0H				; Flag,Channel
 		TDW		TABA01,SA0				; FM 1ch Table Pointer
-		DC.B	-12,000H				; Bias,Volm
+		DC.B	00H,003H				; Bias,Volm
 
 ;------------< Table Data >-------------;
 TABA00	EQU		*
+		DC.B	NL,2
+		DC.B	FDT,10
 		DC.B	EV,3
-		DC.B	GS4,1,CS5,FS5
-		DC.B	PVADD,4
-		DC.B	CS5,FS5
-		DC.B	PVADD,4
-		DC.B	CS5,FS5
-		DC.B	SFEND
+TA00	EQU		*
+		DC.B	0C1H,3,0C3H,0C5H
+		DC.B	PVADD,2
+		DC.B	CMBIAS,-1
+		DC.B	CMREPT,0,4
+		JDW		TA00
+TA01	EQU		*
+		DC.B	0C1H,3,0C3H,0C5H
+		DC.B	PVADD,2
+		DC.B	CMBIAS,1
+		DC.B	CMREPT,0,2
+		JDW		TA01
+		DC.B	CMEND
 
 TABA01	EQU		*
 		DC.B	EV,3
-		DC.B	NL,2
-		DC.B	PVADD,4
-		DC.B	GS4,1,NL
-		DC.B	PVADD,4
-		DC.B	GS4,NL
-		DC.B	SFEND
+TA001	EQU		*
+		DC.B	0C1H,2,0C3H,0C5H
+		DC.B	PVADD,2
+		DC.B	CMBIAS,-1
+		DC.B	CMREPT,0,6
+		JDW		TA001
+TA011	EQU		*
+		DC.B	0C1H,2,0C3H,0C5H
+		DC.B	PVADD,2
+		DC.B	CMBIAS,1
+		DC.B	CMREPT,0,4
+		JDW		TA011
+		DC.B	CMEND
 
 ;------------< Voice Data >-------------;
 TIMBA0	EQU		*
@@ -64,17 +80,41 @@ TIMBA0	EQU		*
 ;=======================================;
 SA1:
 		TDW		TIMBA1,SA1				; Voice Top Address
-		DC.B	1,1						; Base,Use Channel Total
+		DC.B	1,2						; Base,Use Channel Total
 
 		DC.B	80H,080H				; Flag,Channel
 		TDW		TABA10,SA1				; FM 1ch Table Pointer
-		DC.B	-12,000H				; Bias,Volm
+		DC.B	0E8H,002H				; Bias,Volm
+
+		DC.B	80H,0A0H				; Flag,Channel
+		TDW		TABA11,SA1				; FM 1ch Table Pointer
+		DC.B	0E8H,002H				; Bias,Volm
 
 ;------------< Table Data >-------------;
+TABA11	EQU		*
+		DC.B	FDT,1
 TABA10	EQU		*
-		DC.B	EV,3
-		DC.B	BN4,1
-		DC.B	SFEND
+TA100	EQU		*
+		DC.B	0DDH,2,0DBH,0D9H
+		DC.B	CMREPT,0,3
+		JDW		TA100
+TA101	EQU		*
+		DC.B	0DBH,0D9H,0D7H
+		DC.B	CMREPT,0,3
+		JDW		TA101
+TA102	EQU		*
+		DC.B	0D9H,0D7H,0D5H
+		DC.B	CMREPT,0,3
+		JDW		TA102
+TA103	EQU		*
+		DC.B	0DBH,0D9H,0D7H
+		DC.B	CMREPT,0,3
+		JDW		TA103
+
+		DC.B	CMJUMP
+		JDW		TA100
+
+		DC.B	CMEND
 
 ;------------< Voice Data >-------------;
 TIMBA1	EQU		*
@@ -90,29 +130,27 @@ SA2:
 
 		DC.B	80H,5					; Flag,Channel
 		TDW		TABA20,SA2				; FM 1ch Table Pointer
-		DC.B	00H,000H				; Bias,Volm
+		DC.B	00H,006H				; Bias,Volm
 
 ;------------< Table Data >-------------;
 TABA20	EQU		*
 		DC.B	FEV,0
-		DC.B	BN4,1,NL,8
-		DC.B	SFEND
+TA20	EQU		*
+		DC.B	0C4H,1,NL
+		DC.B	CMREPT,0,10H
+		JDW		TA20
+		DC.B	CMJUMP
+		JDW		TA20
 
 ;------------< Voice Data >-------------;
 TIMBA2	EQU		*
-	smpsVcAlgorithm     $02
-	smpsVcFeedback      $00
-	smpsVcUnusedBits    $00
-	smpsVcDetune        $00, $00, $00, $00
-	smpsVcCoarseFreq    $02, $00, $00, $00
-	smpsVcRateScale     $00, $00, $00, $00
-	smpsVcAttackRate    $1F, $00, $00, $10
-	smpsVcAmpMod        $00, $00, $00, $00
-	smpsVcDecayRate1    $1F, $00, $00, $00
-	smpsVcDecayRate2    $04, $00, $00, $03
-	smpsVcDecayLevel    $00, $00, $00, $00
-	smpsVcReleaseRate   $09, $00, $00, $02
-	smpsVcTotalLevel    $00, $7F, $7F, $5D
+		CNF		1,7
+		MD		2,0,1,0,2,0,1,0
+		RSAR	0,31,0,31,0,31,0,31
+		D1R		0,0,0,0
+		D2R		0,0,0,0
+		RRL		15,0,15,0,15,0,15,0
+		TL		27,50,40,0
 
 		even
 
@@ -123,35 +161,28 @@ SA3:
 		TDW		TIMBA3,SA3				; Voice Top Address
 		DC.B	1,1						; Base,Use Channel Total
 
-		DC.B	80H,5					; Flag,Channel
+		DC.B	80H,005H				; Flag,Channel
 		TDW		TABA30,SA3				; FM 1ch Table Pointer
-		DC.B	00H,000H				; Bias,Volm
+		DC.B	24H,002H				; Bias,Volm
 
 ;------------< Table Data >-------------;
 TABA30	EQU		*
 		DC.B	FEV,0
-		DC.B	BN4,1
-		DC.B	SFEND
+		DC.B	LFO,68H,30H
+TABA31	EQU		*
+		DC.B	FVR,1,2,0F8H,0FFH
+		DC.B	0ADH,2AH
+		DC.B	CMEND
 
 ;------------< Voice Data >-------------;
 TIMBA3	EQU		*
-;	Voice $00
-;	$02
-;	$02, $51, $20, $01, 	$1E, $1E, $1E, $1E, 	$10, $0A, $14, $13
-;	$01, $00, $00, $00, 	$FF, $FF, $FF, $FF, 	$24, $0E, $1F, $80
-	smpsVcAlgorithm     $02
-	smpsVcFeedback      $00
-	smpsVcUnusedBits    $00
-	smpsVcDetune        $00, $02, $05, $00
-	smpsVcCoarseFreq    $01, $00, $01, $02
-	smpsVcRateScale     $00, $00, $00, $00
-	smpsVcAttackRate    $1E, $1E, $1E, $1E
-	smpsVcAmpMod        $00, $00, $00, $00
-	smpsVcDecayRate1    $13, $14, $0A, $10
-	smpsVcDecayRate2    $00, $00, $00, $01
-	smpsVcDecayLevel    $0F, $0F, $0F, $0F
-	smpsVcReleaseRate   $0F, $0F, $0F, $0F
-	smpsVcTotalLevel    $80, $1F, $0E, $24
+		CNF		4,7
+		MD		2,0,1,0,2,0,1,0
+		RSAR	0,31,0,0BH,0,31,0,0BH
+		D1R		0,8,0,8
+		D2R		1,0EH,1,0EH
+		RRL		15,0,15,1,15,0,15,1
+		TL		27,50,40,0
 
 		even
 

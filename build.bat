@@ -1,7 +1,7 @@
 echo %date% %time% > time.txt
 
 IF NOT EXIST OUT MKDIR OUT
-asm68k /k /p /o ae-,c+ SRC/_MAIN.ASM, OUT/UT.BIN >OUT/UT.LOG, OUT/UT.SYM, OUT/UT.LST
-convsym OUT/UT.SYM OUT/UT.BIN -a
+asm68k /k /p /o ae-,c+ SRC/_MAIN.ASM, OUT/MD11.BIN >OUT/MD11.LOG, OUT/MD11.SYM, OUT/MD11.LST
+convsym OUT/MD11.SYM OUT/MD11.BIN -a
 
 del time.txt

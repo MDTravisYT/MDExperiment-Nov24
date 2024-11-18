@@ -64,11 +64,11 @@
 		DC.L	ERROR
 		DC.B	'SEGA MEGA DRIVE '		;	SYSTEM
 		DC.B	'MDTRAVIS 2024   '		;	DATE
-		DC.B	'UNDERTALE BATTLE'		;	DOMESTIC TITLE
-		DC.B	' TEST           '
+		DC.B	'                '		;	DOMESTIC TITLE
 		DC.B	'                '
-		DC.B	'UNDERTALE BATTLE'		;	INTERNATIONAL TITLE
-		DC.B	' TEST           '
+		DC.B	'                '
+		DC.B	'                '		;	INTERNATIONAL TITLE
+		DC.B	'                '
 		DC.B	'                '
 		DC.B	'GM XXXXXXXX-XX',0,0	;	SERIAL
 		DC.B	'J               '		;	I/O SUPPORT JOYPAD
