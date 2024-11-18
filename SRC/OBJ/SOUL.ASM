@@ -29,16 +29,19 @@ SOUL:
 ;	up down gets checked first, followed by left right
 
 	@do:
+		MOVE.L	POS, POSBACKUP
 		MOVEQ	#0,	D1
 		MOVE.B	JOYPAD,	D0
 	@uptst:
 		btst	#bitUp,	D0
 		beq.s	@dntst
 		subi.w	#1,	d1
+		subi.l	#32,	POS
 	@dntst:
 		btst	#bitDn,	D0
 		beq.s	@apply
 		addi.w	#1,	d1
+		addi.l	#32,	POS
 	@apply:
 		tst.b	d1
 		beq.s	@ltst
@@ -51,10 +54,12 @@ SOUL:
 		btst	#bitL,	D0
 		beq.s	@rtst
 		subi.w	#1,	d1
+		subi.l	#1,	POS
 	@rtst:
 		btst	#bitR,	D0
 		beq.s	@apply2
 		addi.w	#1,	d1
+		addi.l	#1,	POS
 	@apply2:
 		tst.b	d1
 		beq.s	@skip
@@ -64,6 +69,10 @@ SOUL:
 		JMP		_OBJECTDISPLAY
 ;	===================================================
 	@move:
+		lea		POS,	A1
+		move.l	(A1),A1
+		cmpi.b	#1,	(A1)
+		beq.s	@wall
 		tst.b	SOUL.TIME(A0)
 		beq.s	@end
 		subi.b	#1,	SOUL.TIME(A0)
@@ -75,6 +84,10 @@ SOUL:
 	@y:
 		add.w	D0,OBJ.Y(A0)
 		JMP		_OBJECTDISPLAY
+	@wall:
+		move.b	#$A4,	D0
+		jsr		PlaySound
+		MOVE.L	POSBACKUP,POS
 	@end:
 		move.b	#2,		OBJ.ACTION(A0)
 		JMP		_OBJECTDISPLAY
