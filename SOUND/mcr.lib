@@ -1,0 +1,228 @@
+;=======================================================;
+;			$$$MCR.LIB	(Sound Macro Library)			;
+;						ORG. MDMCR11.LIB				;
+;				'Sound-Source'							;
+;				 for Mega Drive (68K)					;
+;						Ver  1.1 / 1990.9.1				;
+;									  By  H.Kubota		;
+;=======================================================;
+
+;=======================================;
+;				  TDW					;
+;=======================================;
+TDW		macro	x1,x2			;　相対アドレスの算出
+		dc.b	(((\x1-\x2)&$ff00)>>8)
+		dc.b	((\x1-\x2)&$ff)
+		endm
+
+;=======================================;
+;				  JDW					;
+;=======================================;
+JDW		macro	addr
+		dc.b	(((\addr-*-1)&$ff00)>>8)
+		dc.b	((\addr-*)&$ff)
+		endm
+
+;=======================================;
+;		   Z80 BUS REQUEST ON			;
+;=======================================;
+z80bus_on		macro
+		move.w	#$100,z80busreq
+		endm
+
+;=======================================;
+;		   Z80 BUS REQUEST ON			;
+;=======================================;
+z80bus_off		macro
+		move.w	#$000,z80busreq
+		endm
+
+
+;=======================================;
+;				FM VOICE				;
+;=======================================;
+;		CNF		ALG,FBK
+;		MD		M1,D1,M2,D2,M3,D3,M4,D4
+;		TL		T1,T2,T3,T4
+;		RSAR	X1,X2,X3,X4
+;		D1R		X1,X2,X3,X4
+;		D2R		X1,X2,X3,X4
+;		RRL		R1,DL1,R2,DL2,R3,DL3,R4,DL4
+
+;----------------< CNF >----------------;
+CNF		MACRO	ALG,FBK
+cnect	set		\ALG
+		DC.B	\ALG+\FBK*8
+		ENDM
+;----------------< MD >-----------------;
+MD		MACRO	M1,D1,M2,D2,M3,D3,M4,D4
+		DC.B	\D1*10H+\M1,\D2*10H+\M2
+		DC.B	\D3*10H+\M3,\D4*10H+\M4
+		ENDM
+;----------------< TL >-----------------;
+TL		MACRO	T1,T2,T3,T4
+		if		cnect=0
+		dc.b	\T1,\T2,\T3,\T4|80h
+		endif
+		if		cnect=1
+		dc.b	\T1,\T2,\T3,\T4|80h
+		endif
+		if		cnect=2
+		dc.b	\T1,\T2,\T3,\T4|80h
+		endif
+		if		cnect=3
+		dc.b	\T1,\T2,\T3,\T4|80h
+		endif
+		if		cnect=4
+		dc.b	\T1,\T2|80h,\T3,\T4|80h
+		endif
+		if		cnect=5
+		dc.b	\T1,\T2|80h,\T3|80h,\T4|80h
+		endif
+		if		cnect=6
+		dc.b	\T1,\T2|80h,\T3|80h,\T4|80h
+		endif
+		if		cnect=7
+		dc.b	\T1|80h,\T2|80h,\T3|80h,\T4|80h
+		endif
+		ENDM
+;----------------< RSAR >---------------;
+RSAR	MACRO	K1,A1,K2,A2,K3,A3,K4,A4
+		DC.B	\K1*40H+\A1,\K2*40H+\A2,\K3*40H+\A3,\K4*40H+\A4
+		ENDM
+;----------------< D1R >----------------;
+D1R		MACRO	X1,X2,X3,X4
+		DC.B	\X1,\X2,\X3,\X4
+		ENDM
+;----------------< D2R >----------------;
+D2R		MACRO	X1,X2,X3,X4
+		DC.B	\X1,\X2,\X3,\X4
+		ENDM
+;----------------< RRL >----------------;
+RRL		MACRO	R1,DL1,R2,DL2,R3,DL3,R4,DL4
+		DC.B	\R1+\DL1*10H,\R2+\DL2*10H
+		DC.B	\R3+\DL3*10H,\R4+\DL4*10H
+		ENDM
+
+; ---------------------------------------------------------------------------------------------
+; Macros for FM instruments
+; Voices - Feedback
+smpsVcFeedback macro val
+vcFeedback set \val
+	endm
+
+; Voices - Algorithm
+smpsVcAlgorithm macro val
+vcAlgorithm set \val
+	endm
+
+smpsVcUnusedBits macro val
+vcUnusedBits set \val
+	endm
+
+; Voices - Detune
+smpsVcDetune macro op1,op2,op3,op4
+vcDT1 set \op1
+vcDT2 set \op2
+vcDT3 set \op3
+vcDT4 set \op4
+	endm
+
+; Voices - Coarse-Frequency
+smpsVcCoarseFreq macro op1,op2,op3,op4
+vcCF1 set \op1
+vcCF2 set \op2
+vcCF3 set \op3
+vcCF4 set \op4
+	endm
+
+; Voices - Rate Scale
+smpsVcRateScale macro op1,op2,op3,op4
+vcRS1 set \op1
+vcRS2 set \op2
+vcRS3 set \op3
+vcRS4 set \op4
+	endm
+
+; Voices - Attack Rate
+smpsVcAttackRate macro op1,op2,op3,op4
+vcAR1 set \op1
+vcAR2 set \op2
+vcAR3 set \op3
+vcAR4 set \op4
+	endm
+
+; Voices - Amplitude Modulation
+smpsVcAmpMod macro op1,op2,op3,op4
+vcAM1 set \op1
+vcAM2 set \op2
+vcAM3 set \op3
+vcAM4 set \op4
+	endm
+
+; Voices - First Decay Rate
+smpsVcDecayRate1 macro op1,op2,op3,op4
+vcD1R1 set \op1
+vcD1R2 set \op2
+vcD1R3 set \op3
+vcD1R4 set \op4
+	endm
+
+; Voices - Second Decay Rate
+smpsVcDecayRate2 macro op1,op2,op3,op4
+vcD2R1 set \op1
+vcD2R2 set \op2
+vcD2R3 set \op3
+vcD2R4 set \op4
+	endm
+
+; Voices - Decay Level
+smpsVcDecayLevel macro op1,op2,op3,op4
+vcDL1 set \op1
+vcDL2 set \op2
+vcDL3 set \op3
+vcDL4 set \op4
+	endm
+
+; Voices - Release Rate
+smpsVcReleaseRate macro op1,op2,op3,op4
+vcRR1 set \op1
+vcRR2 set \op2
+vcRR3 set \op3
+vcRR4 set \op4
+	endm
+
+; Voices - Total Level
+smpsVcTotalLevel macro op1,op2,op3,op4
+vcTL1 set \op1
+vcTL2 set \op2
+vcTL3 set \op3
+vcTL4 set \op4
+	dc.b	(vcUnusedBits<<6)+(vcFeedback<<3)+vcAlgorithm
+;   0     1     2     3     4     5     6     7
+;%1000,%1000,%1000,%1000,%1010,%1110,%1110,%1111
+vcTLMask4 set ((vcAlgorithm=7)<<7)
+vcTLMask3 set ((vcAlgorithm>=4)<<7)
+vcTLMask2 set ((vcAlgorithm>=5)<<7)
+vcTLMask1 set $80
+;	dc.b	(vcDT4<<4)+vcCF4 ,(vcDT3<<4)+vcCF3 ,(vcDT2<<4)+vcCF2 ,(vcDT1<<4)+vcCF1
+;	dc.b	(vcRS4<<6)+vcAR4 ,(vcRS3<<6)+vcAR3 ,(vcRS2<<6)+vcAR2 ,(vcRS1<<6)+vcAR1
+;	dc.b	(vcAM4<<5)+vcD1R4,(vcAM3<<5)+vcD1R3,(vcAM2<<5)+vcD1R2,(vcAM1<<5)+vcD1R1
+;	dc.b	vcD2R4           ,vcD2R3           ,vcD2R2           ,vcD2R1
+;	dc.b	(vcDL4<<4)+vcRR4 ,(vcDL3<<4)+vcRR3 ,(vcDL2<<4)+vcRR2 ,(vcDL1<<4)+vcRR1
+;	dc.b	vcTL4|vcTLMask4  ,vcTL3|vcTLMask3  ,vcTL2|vcTLMask2  ,vcTL1|vcTLMask1
+	dc.b	(vcDT4<<4)+vcCF4,(vcDT3<<4)+vcCF3,(vcDT2<<4)+vcCF2,(vcDT1<<4)+vcCF1
+	dc.b	(vcRS4<<6)+vcAR4,(vcRS3<<6)+vcAR3,(vcRS2<<6)+vcAR2,(vcRS1<<6)+vcAR1
+	dc.b	(vcAM4<<5)+vcD1R4,(vcAM3<<5)+vcD1R3,(vcAM2<<5)+vcD1R2,(vcAM1<<5)+vcD1R1
+	dc.b	vcD2R4,vcD2R3,vcD2R2,vcD2R1
+	dc.b	(vcDL4<<4)+vcRR4,(vcDL3<<4)+vcRR3,(vcDL2<<4)+vcRR2,(vcDL1<<4)+vcRR1
+	dc.b	vcTL4|vcTLMask4,vcTL3|vcTLMask3,vcTL2|vcTLMask2,vcTL1|vcTLMask1
+	endm
+
+
+
+;=======================================;
+;			  END OF FILE				;
+;=======================================;
+
+; vim: set ft=asm68k sw=4 ts=4 noet:

@@ -1,0 +1,9 @@
+INITJOYPADS:
+		stopZ80
+		waitZ80
+		MOVEQ	#$40,	D0
+		MOVE.B	D0,	(IOCTRL1+1).L
+		MOVE.B	D0,	(IO_CT2_CTRL+1).L
+		MOVE.B	D0,	(IOCTRL3+1).L
+		startZ80
+		RTS
