@@ -58,6 +58,11 @@ startposY	=	11
 		jsr		VSYNC
 		JSR		RUNOBJECTS
 		JSR		PROCESSSPRITES
+		btst	#bitC,	JOYPADPRESS
+		beq.s	@no
+		move.b	#$A0,	D0
+		jsr		PlaySound
+	@no:
 		bra.s	@loop
 		rts
 		
