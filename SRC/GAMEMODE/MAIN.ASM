@@ -74,6 +74,7 @@ startposY	=	11
 		jsr		PlaySound
 		MOVE.W	#$9200+%10010001,(VDPCTRL)      ;	WINDOW PLANE VERTICAL
 		move.w	#2,	TXTID
+		clr.w	TXTPROG
 		bra.s	@windowon
 	@no:
 		bra.s	@loop
@@ -92,12 +93,21 @@ startposY	=	11
 		ADD.W	TXTID, A0
 		ADD.W	(A0),A0
 		SUB.W	TXTID,A0
+		ADD.W	TXTPROG,A0
 		
 		MOVE.W	#$100,	D0	;	set up VRAM pointer for tile
 		ADD.B	(A0),D0
 		
-		WRITEVRAM	(PLANE_W+$48E)
+		MOVE.L	#VRAMWRITE+(((PLANE_W+$48E)&$3FFF)<<16)+(((PLANE_W+$48E)&$C000)>>14),	D1
+		MOVE.W	TXTPROG, D2
+		LSL.L	#8,	D2
+		LSL.L	#8,	D2
+		LSL.L	#1,	D2
+		ADD.L	D2,	D1
+		MOVE.L	D1,VDPCTRL
+		
 		MOVE.W	D0,VDPDATA
+		ADD.W	#1,	TXTPROG
 	
 		bra.w	@windowon
 ;	===============================================
