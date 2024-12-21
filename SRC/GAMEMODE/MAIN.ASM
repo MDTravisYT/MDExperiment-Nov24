@@ -61,7 +61,7 @@ startposY	=	11
 		add.w	#startposY*16,VDP_SCREENPOSY
 		add.l	#startposX+(startposY*32),POS
 		move.l	POS,POSBACKUP
-		
+;	===============================================
 	@loop:
 		MOVE.B	#1,	(VBLANKCMD).W
 		jsr		VSYNC
@@ -72,18 +72,44 @@ startposY	=	11
 		beq.s	@no
 		move.b	#$A0,	D0
 		jsr		PlaySound
-		not.b	TXTON
-		tst.b	TXTON
-		beq.s	@windowoff
-		bne.s	@windowon
+		MOVE.W	#$9200+%10010001,(VDPCTRL)      ;	WINDOW PLANE VERTICAL
+		bra.s	@windowon
 	@no:
 		bra.s	@loop
+;	===============================================
 	@windowon:
-		MOVE.W	#$9200+%10010001,(VDPCTRL)      ;	WINDOW PLANE VERTICAL
-		bra.s	@loop
+		MOVE.B	#1,	(VBLANKCMD).W
+		jsr		VSYNC
+		btst	#bitC,	JOYPADPRESS
+		beq.s	@no2
+		move.b	#$A0,	D0
+		jsr		PlaySound
+		bra.s	@windowoff
+	@no2:
+	
+		
+	
+		bra.w	@windowon
+;	===============================================
 	@windowoff:
 		MOVE.W	#$9200,(VDPCTRL)      ;	WINDOW PLANE VERTICAL
-		bra.s	@loop
+		bra.w	@loop
+		
+CN = 1	;	continue
+SL = 2	;	shift line
+CB = 3	;	clear box
+EX = 4	;	end
+		
+TXTTST:
+;	ref		"XXXXXXXXXXXXXXXXXX"
+	dc.b	"Hey there, player!",CN
+	dc.b	"Did you know that",SL
+	dc.b	"Super Mario Bros.",SL
+	dc.b	"2 is actually a",SL
+	dc.b	"reskin of a game",SL
+	dc.b	"called Doki Doki",SL
+	dc.b	"Panic?",CB
+	dc.b	"Pretty coo, right?",EX
 		
 COLMAP:
 	dc.b	0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
