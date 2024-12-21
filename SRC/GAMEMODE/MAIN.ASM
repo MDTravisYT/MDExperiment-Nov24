@@ -80,6 +80,7 @@ startposY	=	11
 ;	===============================================
 	@windowon:
 		MOVE.W	#$9200+%10010001,(VDPCTRL)      ;	WINDOW PLANE VERTICAL
+		MOVE.B	#3,	TXTWAIT
 		move.w	#0,	d0
 		lea		VDPDATA,a0
 		WRITEVRAM	(PLANE_W+$48E)
@@ -96,12 +97,18 @@ startposY	=	11
 		jsr		PlaySound
 		bra.w	@windowoff
 	@no2:
-	
+		SUB.B	#1,	TXTWAIT
 		MOVE.W	#TXTIDS,	A0	;	get the text pointer
 		ADD.W	TXTID, A0
 		ADD.W	(A0),A0
 		SUB.W	TXTID,A0
 		ADD.W	TXTPROG,A0
+		
+		CMPI.B	#EX,(A0)
+		BEQ.S	@loopwindow
+		
+		TST.B	TXTWAIT
+		BNE.S	@loopwindow
 		
 		MOVE.W	#$100,	D0	;	set up VRAM pointer for tile
 		ADD.B	(A0),D0
@@ -116,6 +123,7 @@ startposY	=	11
 		
 		MOVE.W	D0,VDPDATA
 		ADD.W	#1,	TXTPROG
+		MOVE.B	#3,	TXTWAIT
 	
 		bra.w	@loopwindow
 ;	===============================================
