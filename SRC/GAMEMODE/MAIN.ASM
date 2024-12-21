@@ -36,7 +36,6 @@ MAIN:
 		
 	COPYTILEMAP		BATTLEMAP,	PLANE_A,	64,	64
 	COPYTILEMAP		BG,			PLANE_B,	32,	28
-	COPYTILEMAP		BOARDMAP,	PLANE_W+$A00,	40,	8
 	
 		MOVE.B	#$01,	(OBJSLOT00)
 		LEA		(OBJSLOT00),	A0
@@ -81,13 +80,7 @@ startposY	=	11
 	@windowon:
 		MOVE.W	#$9200+%10010001,(VDPCTRL)      ;	WINDOW PLANE VERTICAL
 		MOVE.B	#3,	TXTWAIT
-		move.w	#0,	d0
-		lea		VDPDATA,a0
-		WRITEVRAM	(PLANE_W+$48E)
-		move.w	#64, d1
-	@clrwindow:
-		move.w	d0,(a0)
-		dbf		d1, @clrwindow
+		COPYTILEMAP_W	BOARDMAP,	(PLANE_W+$44C),	20,	6
 	@loopwindow:
 		MOVE.B	#1,	(VBLANKCMD).W
 		jsr		VSYNC

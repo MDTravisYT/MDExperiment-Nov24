@@ -10,6 +10,14 @@ COPYTILEMAP		MACRO	source,loc,width,height
 		jsr		DrawTileMap
 		endm
 		
+COPYTILEMAP_W	MACRO	source,loc,width,height
+		lea		(source).l,a1
+		move.l	#$40000000+((loc&$3FFF)<<16)+((loc&$C000)>>14),d0
+		moveq	#width-1,d1
+		moveq	#height-1,d2
+		jsr		DrawTileMap_W
+		endm
+		
 WRITEVRAM	MACRO	LOC
 		MOVE.L	#VRAMWRITE+((LOC&$3FFF)<<16)+((LOC&$C000)>>14),	(VDPCTRL)
 		ENDM
