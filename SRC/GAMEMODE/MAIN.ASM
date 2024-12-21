@@ -103,7 +103,7 @@ startposY	=	11
 		TST.B	TXTWAIT
 		BNE.S	@loopwindow
 		
-		MOVE.W	#$100,	D0	;	set up VRAM pointer for tile
+		MOVE.W	#$6100,	D0	;	set up VRAM pointer for tile
 		ADD.B	(A0),D0
 		
 		MOVE.L	#VRAMWRITE+(((PLANE_W+$4CE)&$3FFF)<<16)+(((PLANE_W+$4CE)&$C000)>>14),	D1
