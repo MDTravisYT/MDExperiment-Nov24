@@ -106,7 +106,7 @@ startposY	=	11
 		MOVE.W	#$100,	D0	;	set up VRAM pointer for tile
 		ADD.B	(A0),D0
 		
-		MOVE.L	#VRAMWRITE+(((PLANE_W+$48E)&$3FFF)<<16)+(((PLANE_W+$48E)&$C000)>>14),	D1
+		MOVE.L	#VRAMWRITE+(((PLANE_W+$4CE)&$3FFF)<<16)+(((PLANE_W+$4CE)&$C000)>>14),	D1
 		MOVE.W	TXTPROG, D2
 		LSL.L	#8,	D2
 		LSL.L	#8,	D2
