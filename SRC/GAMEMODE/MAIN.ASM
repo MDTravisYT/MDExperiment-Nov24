@@ -45,8 +45,8 @@ MAIN:
 		MOVE.W	#112,	HSCROLLTABLE
 		MOVE.W	#-104,	VDP_SCREENPOSY
 		
-		move.b	#$81,	D0
-		jsr		PlaySound
+	;	move.b	#$81,	D0
+	;	jsr		PlaySound
 		
 		JSR		PALFADEIN
 		MOVE.W	#$9200,(VDPCTRL)      ;	WINDOW PLANE VERTICAL
@@ -73,6 +73,7 @@ startposY	=	11
 		move.b	#$A0,	D0
 		jsr		PlaySound
 		MOVE.W	#$9200+%10010001,(VDPCTRL)      ;	WINDOW PLANE VERTICAL
+		move.w	#2,	TXTID
 		bra.s	@windowon
 	@no:
 		bra.s	@loop
@@ -84,10 +85,19 @@ startposY	=	11
 		beq.s	@no2
 		move.b	#$A0,	D0
 		jsr		PlaySound
-		bra.s	@windowoff
+		bra.w	@windowoff
 	@no2:
 	
+		MOVE.W	#TXTIDS,	A0	;	get the text pointer
+		ADD.W	TXTID, A0
+		ADD.W	(A0),A0
+		SUB.W	TXTID,A0
 		
+		MOVE.W	#$100,	D0	;	set up VRAM pointer for tile
+		ADD.B	(A0),D0
+		
+		WRITEVRAM	(PLANE_W+$48E)
+		MOVE.W	D0,VDPDATA
 	
 		bra.w	@windowon
 ;	===============================================
@@ -100,6 +110,10 @@ SL = 2	;	shift line
 CB = 3	;	clear box
 EX = 4	;	end
 		
+TXTIDS:
+	DC.W	TXTTST-TXTIDS	;	0
+	DC.W	TXTTST2-TXTIDS	;	2
+		
 TXTTST:
 ;	ref		"XXXXXXXXXXXXXXXXXX"
 	dc.b	"Hey there, player!",CN
@@ -109,7 +123,11 @@ TXTTST:
 	dc.b	"reskin of a game",SL
 	dc.b	"called Doki Doki",SL
 	dc.b	"Panic?",CB
-	dc.b	"Pretty coo, right?",EX
+	dc.b	"Pretty cool right?",EX
+	even
+TXTTST2:
+	dc.b	"dummy",EX
+	even
 		
 COLMAP:
 	dc.b	0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0

@@ -94,8 +94,8 @@ SOUL:
 		JSR		_OBJECTANIMATE
 		JMP		_OBJECTDISPLAY
 	@wall:
-		move.b	#$A6,	D0
-		jsr		PlaySound
+	;	move.b	#$A6,	D0
+	;	jsr		PlaySound
 		MOVE.L	POSBACKUP,POS
 		move.b	#2,		OBJ.ACTION(A0)
 		LEA		ANI_SOUL,	A1
