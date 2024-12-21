@@ -18,7 +18,7 @@ SOUL:
 		MOVE.B	#$12,		OBJ.YRAD(A0)
 		MOVE.B	#9,			OBJ.XRAD(A0)
 		MOVE.L	#MAP_SOUL,	OBJ.MAP(A0)
-		MOVE.W	#$0,		OBJ.TILE(A0)
+		MOVE.W	#$200,		OBJ.TILE(A0)
 		MOVE.B	#4,			OBJ.RENDERFLAGS(A0)
 		MOVE.B	#2,			OBJ.PRIORITY(A0)
 ;	===================================================
@@ -37,11 +37,13 @@ SOUL:
 		beq.s	@dntst
 		subi.w	#1,	d1
 		subi.l	#32,	POS
+		move.b	#0,	OBJ.ANIM(A0)
 	@dntst:
 		btst	#bitDn,	D0
 		beq.s	@apply
 		addi.w	#1,	d1
 		addi.l	#32,	POS
+		move.b	#1,	OBJ.ANIM(A0)
 	@apply:
 		tst.b	d1
 		beq.s	@ltst
@@ -56,11 +58,13 @@ SOUL:
 		beq.s	@rtst
 		subi.w	#1,	d1
 		subi.l	#1,	POS
+		move.b	#2,	OBJ.ANIM(A0)
 	@rtst:
 		btst	#bitR,	D0
 		beq.s	@apply2
 		addi.w	#1,	d1
 		addi.l	#1,	POS
+		move.b	#3,	OBJ.ANIM(A0)
 	@apply2:
 		tst.b	d1
 		beq.s	@skip
@@ -81,15 +85,21 @@ SOUL:
 		btst	#1,	OBJ.ACTION(A0)
 		beq.s	@y
 		sub.w	D0,HSCROLLTABLE
+		LEA		ANI_SOUL,	A1
+		JSR		_OBJECTANIMATE
 		JMP		_OBJECTDISPLAY
 	@y:
 		add.w	D0,VDP_SCREENPOSY
+		LEA		ANI_SOUL,	A1
+		JSR		_OBJECTANIMATE
 		JMP		_OBJECTDISPLAY
 	@wall:
 		move.b	#$A6,	D0
 		jsr		PlaySound
 		MOVE.L	POSBACKUP,POS
 		move.b	#2,		OBJ.ACTION(A0)
+		LEA		ANI_SOUL,	A1
+		JSR		_OBJECTANIMATE
 		JMP		_OBJECTDISPLAY
 	@end:
 		move.b	#2,		OBJ.ACTION(A0)
@@ -97,3 +107,12 @@ SOUL:
 		
 MAP_SOUL:
 		INCBIN	"SRC/OBJ/SOUL.MAP"
+ANI_SOUL:
+		DC.W	@N-ANI_SOUL		;	0
+		DC.W	@S-ANI_SOUL		;	1
+		DC.W	@W-ANI_SOUL		;	2
+		DC.W	@E-ANI_SOUL		;	3
+	@S:	DC.B	7,1,0,2,0,-1
+	@N:	DC.B	7,4,3,5,3,-1
+	@W:	DC.B	7,7,6,-1
+	@E:	DC.B	7,9,8,-1

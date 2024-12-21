@@ -109,10 +109,10 @@ PROCESSSPRITES:
 
 BUILDSPRITETOBUFFER:                    ; ...
                 MOVEA.W OBJ.TILE(A0),A3
-                BTST    #0,D4
-                BNE.S   _BUILDSPRITEXFLIP
-                BTST    #1,D4
-                BNE.W   _BUILDSPRITEYFLIP
+            ;    BTST    #1,D4
+            ;    BNE.S   _BUILDSPRITEXFLIP
+            ;    BTST    #0,D4
+            ;    BNE.W   _BUILDSPRITEYFLIP
 ; END OF FUNCTION BUILDSPRITETOBUFFER
 
 
@@ -149,133 +149,133 @@ _BUILDSPRITE:                           ; ...
                 RTS
 ; END OF FUNCTION _BUILDSPRITE
 
-_BUILDSPRITEXFLIP:                      ; ...
-                BTST    #1,D4
-                BNE.W   _BUILDSPRITEXYFLIPPED
-
-@LOOP:                                 ; ...
-                CMPI.B  #$50,D5 ; 'P'
-                BEQ.S   @LIMITREACHED
-                MOVE.B  (A1)+,D0
-                EXT.W   D0
-                ADD.W   D2,D0
-                MOVE.W  D0,(A2)+
-                MOVE.B  (A1)+,D4
-                MOVE.B  D4,(A2)+
-                ADDQ.B  #1,D5
-                MOVE.B  D5,(A2)+
-                MOVE.B  (A1)+,D0
-                LSL.W   #8,D0
-                MOVE.B  (A1)+,D0
-                ADD.W   A3,D0
-                EORI.W  #$800,D0
-                MOVE.W  D0,(A2)+
-                MOVE.B  (A1)+,D0
-                EXT.W   D0
-                NEG.W   D0
-                ADD.B   D4,D4
-                ANDI.W  #$18,D4
-                ADDQ.W  #8,D4
-                SUB.W   D4,D0
-                ADD.W   D3,D0
-                ANDI.W  #$1FF,D0
-                BNE.S   @WRITEX
-                ADDQ.W  #1,D0
-
-@WRITEX:                               ; ...
-                MOVE.W  D0,(A2)+
-                DBF     D1,@LOOP
-
-@LIMITREACHED:                         ; ...
-                RTS
-; END OF FUNCTION _BUILDSPRITEXFLIP
-
-
-; =============== S U B R O U T I N E =======================================
-
-
-_BUILDSPRITEYFLIP:                      ; ...
-                CMPI.B  #$50,D5 ; 'P'
-                BEQ.S   @LIMITREACHED
-                MOVE.B  (A1)+,D0
-                MOVE.B  (A1),D4
-                EXT.W   D0
-                NEG.W   D0
-                LSL.B   #3,D4
-                ANDI.W  #$18,D4
-                ADDQ.W  #8,D4
-                SUB.W   D4,D0
-                ADD.W   D2,D0
-                MOVE.W  D0,(A2)+
-                MOVE.B  (A1)+,(A2)+
-                ADDQ.B  #1,D5
-                MOVE.B  D5,(A2)+
-                MOVE.B  (A1)+,D0
-                LSL.W   #8,D0
-                MOVE.B  (A1)+,D0
-                ADD.W   A3,D0
-                EORI.W  #$1000,D0
-                MOVE.W  D0,(A2)+
-                MOVE.B  (A1)+,D0
-                EXT.W   D0
-                ADD.W   D3,D0
-                ANDI.W  #$1FF,D0
-                BNE.S   @WRITEX
-                ADDQ.W  #1,D0
-
-@WRITEX:                               ; ...
-                MOVE.W  D0,(A2)+
-                DBF     D1,_BUILDSPRITEYFLIP
-
-@LIMITREACHED:                         ; ...
-                RTS
-; END OF FUNCTION _BUILDSPRITEYFLIP
-
-
-; =============== S U B R O U T I N E =======================================
-
-
-_BUILDSPRITEXYFLIPPED:                  ; ...
-                CMPI.B  #$50,D5 ; 'P'
-                BEQ.S   @LIMITREACHED
-                MOVE.B  (A1)+,D0
-                MOVE.B  (A1),D4
-                EXT.W   D0
-                NEG.W   D0
-                LSL.B   #3,D4
-                ANDI.W  #$18,D4
-                ADDQ.W  #8,D4
-                SUB.W   D4,D0
-                ADD.W   D2,D0
-                MOVE.W  D0,(A2)+
-                MOVE.B  (A1)+,D4
-                MOVE.B  D4,(A2)+
-                ADDQ.B  #1,D5
-                MOVE.B  D5,(A2)+
-                MOVE.B  (A1)+,D0
-                LSL.W   #8,D0
-                MOVE.B  (A1)+,D0
-                ADD.W   A3,D0
-                EORI.W  #$1800,D0
-                MOVE.W  D0,(A2)+
-                MOVE.B  (A1)+,D0
-                EXT.W   D0
-                NEG.W   D0
-                ADD.B   D4,D4
-                ANDI.W  #$18,D4
-                ADDQ.W  #8,D4
-                SUB.W   D4,D0
-                ADD.W   D3,D0
-                ANDI.W  #$1FF,D0
-                BNE.S   @WRITEX
-                ADDQ.W  #1,D0
-
-@WRITEX:                               ; ...
-                MOVE.W  D0,(A2)+
-                DBF     D1,_BUILDSPRITEXYFLIPPED
-
-@LIMITREACHED:                         ; ...
-                RTS
+;_BUILDSPRITEXFLIP:                      ; ...
+;                BTST    #1,D4
+;                BNE.W   _BUILDSPRITEXYFLIPPED
+;
+;@LOOP:                                 ; ...
+;                CMPI.B  #$50,D5 ; 'P'
+;                BEQ.S   @LIMITREACHED
+;                MOVE.B  (A1)+,D0
+;                EXT.W   D0
+;                ADD.W   D2,D0
+;                MOVE.W  D0,(A2)+
+;                MOVE.B  (A1)+,D4
+;                MOVE.B  D4,(A2)+
+;                ADDQ.B  #1,D5
+;                MOVE.B  D5,(A2)+
+;                MOVE.B  (A1)+,D0
+;                LSL.W   #8,D0
+;                MOVE.B  (A1)+,D0
+;                ADD.W   A3,D0
+;                EORI.W  #$800,D0
+;                MOVE.W  D0,(A2)+
+;                MOVE.B  (A1)+,D0
+;                EXT.W   D0
+;                NEG.W   D0
+;                ADD.B   D4,D4
+;                ANDI.W  #$18,D4
+;                ADDQ.W  #8,D4
+;                SUB.W   D4,D0
+;                ADD.W   D3,D0
+;                ANDI.W  #$1FF,D0
+;                BNE.S   @WRITEX
+;                ADDQ.W  #1,D0
+;
+;@WRITEX:                               ; ...
+;                MOVE.W  D0,(A2)+
+;                DBF     D1,@LOOP
+;
+;@LIMITREACHED:                         ; ...
+;                RTS
+;; END OF FUNCTION _BUILDSPRITEXFLIP
+;
+;
+;; =============== S U B R O U T I N E =======================================
+;
+;
+;_BUILDSPRITEYFLIP:                      ; ...
+;                CMPI.B  #$50,D5 ; 'P'
+;                BEQ.S   @LIMITREACHED
+;                MOVE.B  (A1)+,D0
+;                MOVE.B  (A1),D4
+;                EXT.W   D0
+;                NEG.W   D0
+;                LSL.B   #3,D4
+;                ANDI.W  #$18,D4
+;                ADDQ.W  #8,D4
+;                SUB.W   D4,D0
+;                ADD.W   D2,D0
+;                MOVE.W  D0,(A2)+
+;                MOVE.B  (A1)+,(A2)+
+;                ADDQ.B  #1,D5
+;                MOVE.B  D5,(A2)+
+;                MOVE.B  (A1)+,D0
+;                LSL.W   #8,D0
+;                MOVE.B  (A1)+,D0
+;                ADD.W   A3,D0
+;                EORI.W  #$1000,D0
+;                MOVE.W  D0,(A2)+
+;                MOVE.B  (A1)+,D0
+;                EXT.W   D0
+;                ADD.W   D3,D0
+;                ANDI.W  #$1FF,D0
+;                BNE.S   @WRITEX
+;                ADDQ.W  #1,D0
+;
+;@WRITEX:                               ; ...
+;                MOVE.W  D0,(A2)+
+;                DBF     D1,_BUILDSPRITEYFLIP
+;
+;@LIMITREACHED:                         ; ...
+;                RTS
+;; END OF FUNCTION _BUILDSPRITEYFLIP
+;
+;
+;; =============== S U B R O U T I N E =======================================
+;
+;
+;_BUILDSPRITEXYFLIPPED:                  ; ...
+;                CMPI.B  #$50,D5 ; 'P'
+;                BEQ.S   @LIMITREACHED
+;                MOVE.B  (A1)+,D0
+;                MOVE.B  (A1),D4
+;                EXT.W   D0
+;                NEG.W   D0
+;                LSL.B   #3,D4
+;                ANDI.W  #$18,D4
+;                ADDQ.W  #8,D4
+;                SUB.W   D4,D0
+;                ADD.W   D2,D0
+;                MOVE.W  D0,(A2)+
+;                MOVE.B  (A1)+,D4
+;                MOVE.B  D4,(A2)+
+;                ADDQ.B  #1,D5
+;                MOVE.B  D5,(A2)+
+;                MOVE.B  (A1)+,D0
+;                LSL.W   #8,D0
+;                MOVE.B  (A1)+,D0
+;                ADD.W   A3,D0
+;                EORI.W  #$1800,D0
+;                MOVE.W  D0,(A2)+
+;                MOVE.B  (A1)+,D0
+;                EXT.W   D0
+;                NEG.W   D0
+;                ADD.B   D4,D4
+;                ANDI.W  #$18,D4
+;                ADDQ.W  #8,D4
+;                SUB.W   D4,D0
+;                ADD.W   D3,D0
+;                ANDI.W  #$1FF,D0
+;                BNE.S   @WRITEX
+;                ADDQ.W  #1,D0
+;
+;@WRITEX:                               ; ...
+;                MOVE.W  D0,(A2)+
+;                DBF     D1,_BUILDSPRITEXYFLIPPED
+;
+;@LIMITREACHED:                         ; ...
+;                RTS
 ; END OF FUNCTION _BUILDSPRITEXYFLIPPED
 
 _OBJECTDISPLAY:                         ; ...
