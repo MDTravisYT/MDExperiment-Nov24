@@ -49,7 +49,7 @@ MAIN:
 		jsr		PlaySound
 		
 		JSR		PALFADEIN
-	;	MOVE.W	#$9200+%10010100,(VDPCTRL)      ;	WINDOW PLANE VERTICAL
+		MOVE.W	#$9200,(VDPCTRL)      ;	WINDOW PLANE VERTICAL
 		
 		MOVE.L	#COLMAP,	POS
 		MOVE.L	#COLMAP,	POSBACKUP
@@ -67,13 +67,23 @@ startposY	=	11
 		jsr		VSYNC
 		JSR		RUNOBJECTS
 		JSR		PROCESSSPRITES
+		
 		btst	#bitC,	JOYPADPRESS
 		beq.s	@no
 		move.b	#$A0,	D0
 		jsr		PlaySound
+		not.b	TXTON
+		tst.b	TXTON
+		beq.s	@windowoff
+		bne.s	@windowon
 	@no:
 		bra.s	@loop
-		rts
+	@windowon:
+		MOVE.W	#$9200+%10010001,(VDPCTRL)      ;	WINDOW PLANE VERTICAL
+		bra.s	@loop
+	@windowoff:
+		MOVE.W	#$9200,(VDPCTRL)      ;	WINDOW PLANE VERTICAL
+		bra.s	@loop
 		
 COLMAP:
 	dc.b	0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
