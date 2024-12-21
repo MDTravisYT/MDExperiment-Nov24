@@ -72,7 +72,6 @@ startposY	=	11
 		beq.s	@no
 		move.b	#$A0,	D0
 		jsr		PlaySound
-		MOVE.W	#$9200+%10010001,(VDPCTRL)      ;	WINDOW PLANE VERTICAL
 		move.w	#2,	TXTID
 		clr.w	TXTPROG
 		bra.s	@windowon
@@ -80,6 +79,15 @@ startposY	=	11
 		bra.s	@loop
 ;	===============================================
 	@windowon:
+		MOVE.W	#$9200+%10010001,(VDPCTRL)      ;	WINDOW PLANE VERTICAL
+		move.w	#0,	d0
+		lea		VDPDATA,a0
+		WRITEVRAM	(PLANE_W+$48E)
+		move.w	#64, d1
+	@clrwindow:
+		move.w	d0,(a0)
+		dbf		d1, @clrwindow
+	@loopwindow:
 		MOVE.B	#1,	(VBLANKCMD).W
 		jsr		VSYNC
 		btst	#bitC,	JOYPADPRESS
@@ -109,7 +117,7 @@ startposY	=	11
 		MOVE.W	D0,VDPDATA
 		ADD.W	#1,	TXTPROG
 	
-		bra.w	@windowon
+		bra.w	@loopwindow
 ;	===============================================
 	@windowoff:
 		MOVE.W	#$9200,(VDPCTRL)      ;	WINDOW PLANE VERTICAL
