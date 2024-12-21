@@ -71,7 +71,7 @@ startposY	=	11
 		beq.s	@no
 		move.b	#$A0,	D0
 		jsr		PlaySound
-		move.w	#2,	TXTID
+		move.w	#0,	TXTID
 		clr.w	TXTPROG
 		bra.s	@windowon
 	@no:
@@ -97,9 +97,15 @@ startposY	=	11
 		SUB.W	TXTID,A0
 		ADD.W	TXTPROG,A0
 		
-		CMPI.B	#EX,(A0)
+		CMPI.B	#EX,(A0)	;	exit test
 		BEQ.S	@loopwindow
 		
+		CMPI.B	#CN,(A0)	;	continue test
+		BNE.S	@nocont
+		ADD.W	#45,TXTLINE
+		ADD.W	#1,TXTPROG
+		
+	@nocont:
 		TST.B	TXTWAIT
 		BNE.S	@loopwindow
 		
@@ -108,6 +114,7 @@ startposY	=	11
 		
 		MOVE.L	#VRAMWRITE+(((PLANE_W+$4CE)&$3FFF)<<16)+(((PLANE_W+$4CE)&$C000)>>14),	D1
 		MOVE.W	TXTPROG, D2
+		ADD.W	TXTLINE,D2
 		LSL.L	#8,	D2
 		LSL.L	#8,	D2
 		LSL.L	#1,	D2
