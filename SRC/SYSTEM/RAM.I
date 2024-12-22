@@ -37,12 +37,20 @@ PLANE_W			=	$C000
 VDPDATA			=	$C00000
 VDPCTRL			=	$C00004
 psg_input:		equ $C00011
-VRAMWRITE       =	$40000000
-VSRAMWRITE      =	$40000010
-VRAMDMA         =	$40000080
-VSRAMDMA        =	$40000090
-CRAMWRITE       =	$C0000000
-CRAMDMA         =	$C0000080
+; ---------------------------------------------------------------------------
+; VDP operation codes
+; ---------------------------------------------------------------------------
+
+VRAMWRITE    EQU    $40000000        ; VRAM write
+CRAMWRITE    EQU    $C0000000        ; CRAM write
+VSRAMWRITE    EQU    $40000010        ; VSRAM write
+VRAMREAD    EQU    $00000000        ; VRAM read
+CRAMREAD    EQU    $00000020        ; CRAM read
+VSRAMREAD    EQU    $00000010        ; VSRAM read
+VRAMDMA        EQU    $40000080        ; VRAM DMA
+CRAMDMA        EQU    $C0000080        ; CRAM DMA
+VSRAMDMA    EQU    $40000090        ; VSRAM DMA
+VRAMCOPY    EQU    $000000C0        ; VRAM DMA copy
 
 POS				=	$FFFF0000	;	long
 POSBACKUP		=	$FFFF0004	;	long
@@ -51,6 +59,7 @@ TXTID		=	$FFFF0010	;	word
 TXTPROG		=	$FFFF0012	;	word
 TXTWAIT		=	$FFFF0014	;	byte
 TXTLINE		=	$FFFF0016	;	byte
+TXTBUFFER	=	$FFFF0018	;	buffer, 38 bytes
 
 SPRITES			=	$FFFFAC00
 HSCROLLTABLE	=	$FFFFCC00

@@ -72,7 +72,6 @@ startposY	=	11
 		move.b	#$A0,	D0
 		jsr		PlaySound
 		move.w	#0,	TXTID
-		clr.w	TXTPROG
 		bra.s	@windowon
 	@no:
 		bra.s	@loop
@@ -80,15 +79,17 @@ startposY	=	11
 	@windowon:
 		MOVE.W	#$9200+%10010001,(VDPCTRL)      ;	WINDOW PLANE VERTICAL
 		MOVE.B	#3,	TXTWAIT
+		clr.w	TXTPROG
+		clr.w	TXTLINE
 		COPYTILEMAP_W	BOARDMAP,	(PLANE_W+$44C),	20,	6
 	@loopwindow:
 		MOVE.B	#1,	(VBLANKCMD).W
 		jsr		VSYNC
-		btst	#bitC,	JOYPADPRESS
-		beq.s	@no2
-		move.b	#$A0,	D0
-		jsr		PlaySound
-		bra.w	@windowoff
+	;	btst	#bitC,	JOYPADPRESS
+	;	beq.s	@no2
+	;	move.b	#$A0,	D0
+	;	jsr		PlaySound
+	;	bra.w	@windowoff
 	@no2:
 		SUB.B	#1,	TXTWAIT
 		MOVE.W	#TXTIDS,	A0	;	get the text pointer
@@ -104,8 +105,10 @@ startposY	=	11
 		BNE.S	@nocont
 		ADD.W	#45,TXTLINE
 		ADD.W	#1,TXTPROG
-		
 	@nocont:
+		CMPI.B	#SL,(A0)	;	shift test
+		BEQ.W	@shiftwindow
+	
 		TST.B	TXTWAIT
 		BNE.S	@loopwindow
 		
@@ -130,7 +133,76 @@ startposY	=	11
 	@windowoff:
 		MOVE.W	#$9200,(VDPCTRL)      ;	WINDOW PLANE VERTICAL
 		bra.w	@loop
+;	===============================================
+	@shiftwindow:
+		MOVE.B	#1,	(VBLANKCMD).W
+		jsr		VSYNC
+		btst	#bitC,	JOYPADPRESS
+		beq.s	@shiftwindow
+		move.b	#$A0,	D0
+		jsr		PlaySound
+		ADD.W	#1,TXTPROG
+		SUB.W	#19,TXTLINE
 		
+		move.l	#1,	d2
+	@scrup:
+		MOVE.B	#4,	TXTWAIT
+		MOVE.L	#VRAMREAD+(((PLANE_W+$4CE)&$3FFF)<<16)+(((PLANE_W+$4CE)&$C000)>>14),	VDPCTRL
+		LEA		VDPDATA,	A0
+		LEA		TXTBUFFER,	A1
+		bsr.w	V2B
+		MOVE.L	#VRAMWRITE+(((PLANE_W+$48E)&$3FFF)<<16)+(((PLANE_W+$48E)&$C000)>>14),	VDPCTRL
+		LEA		TXTBUFFER,	A1
+		bsr.w	B2V
+		
+		MOVE.L	#VRAMREAD+(((PLANE_W+$50E)&$3FFF)<<16)+(((PLANE_W+$50E)&$C000)>>14),	VDPCTRL
+		LEA		VDPDATA,	A0
+		LEA		TXTBUFFER,	A1
+		bsr.w	V2B
+		MOVE.L	#VRAMWRITE+(((PLANE_W+$4CE)&$3FFF)<<16)+(((PLANE_W+$4CE)&$C000)>>14),	VDPCTRL
+		LEA		TXTBUFFER,	A1
+		bsr.w	B2V
+		
+		MOVE.L	#VRAMREAD+(((PLANE_W+$54E)&$3FFF)<<16)+(((PLANE_W+$54E)&$C000)>>14),	VDPCTRL
+		LEA		VDPDATA,	A0
+		LEA		TXTBUFFER,	A1
+		bsr.w	V2B
+		MOVE.L	#VRAMWRITE+(((PLANE_W+$50E)&$3FFF)<<16)+(((PLANE_W+$50E)&$C000)>>14),	VDPCTRL
+		LEA		TXTBUFFER,	A1
+		bsr.w	B2V
+		
+		MOVE.L	#VRAMWRITE+(((PLANE_W+$54E)&$3FFF)<<16)+(((PLANE_W+$54E)&$C000)>>14),	VDPCTRL
+		bsr.w	clrLine
+	@scrup_wait:
+		sub.b	#1,	TXTWAIT
+		MOVE.B	#1,	(VBLANKCMD).W
+		jsr		VSYNC
+		TST.B	TXTWAIT
+		BNE.S	@scrup_wait
+	dbf	d2,	@scrup
+		MOVE.B	#3,	TXTWAIT
+		bra.w	@loopwindow
+;	===============================================
+V2B:
+		move.l	#10,d1
+	@loop:
+		MOVE.L	(A0),(A1)+
+		dbf	d1,	@loop
+		rts
+B2V:
+		move.l	#10,d1
+	@loop:
+		MOVE.L	(A1)+,(A0)
+		dbf	d1,	@loop
+		rts
+		
+clrLine:
+		move.l	#8,d1
+	@loop:
+		MOVE.L	#$61006100,(A0)
+		dbf	d1,	@loop
+		rts
+
 CN = 1	;	continue
 SL = 2	;	shift line
 CB = 3	;	clear box
@@ -143,12 +215,12 @@ TXTIDS:
 TXTTST:
 ;	ref		"XXXXXXXXXXXXXXXXXX"
 	dc.b	"Hey there, player!",CN
-	dc.b	"Did you know that",SL
-	dc.b	"Super Mario Bros.",SL
-	dc.b	"2 is actually a",SL
-	dc.b	"reskin of a game",SL
-	dc.b	"called Doki Doki",SL
-	dc.b	"Panic?",CB
+	dc.b	"Did you know that ",SL
+	dc.b	"Super Mario Bros. ",SL
+	dc.b	"2 is actually a   ",SL
+	dc.b	"reskin of a game  ",SL
+	dc.b	"called Doki Doki  ",SL
+	dc.b	"Panic?            ",CB
 	dc.b	"Pretty cool right?",EX
 	even
 TXTTST2:
