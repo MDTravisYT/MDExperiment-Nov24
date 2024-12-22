@@ -138,13 +138,26 @@ startposY	=	11
 	@shiftwindow:
 		MOVE.B	#1,	(VBLANKCMD).W
 		jsr		VSYNC
+		sub.b	#1,	TXTWAIT
+		btst	#5,	TXTWAIT
+		beq.s	@noarr
+		
+	@arr:
+		MOVE.L	#VRAMWRITE+(((PLANE_W+$5B0)&$3FFF)<<16)+(((PLANE_W+$5B0)&$C000)>>14),	VDPCTRL
+		MOVE.W	#$615F,	VDPDATA
+		BRA.S	@contshift
+	@noarr:
+		MOVE.L	#VRAMWRITE+(((PLANE_W+$5B0)&$3FFF)<<16)+(((PLANE_W+$5B0)&$C000)>>14),	VDPCTRL
+		MOVE.W	#$6102,	VDPDATA
+	@contshift:
 		btst	#bitC,	JOYPADPRESS
 		beq.s	@shiftwindow
 		move.b	#$A0,	D0
 		jsr		PlaySound
 		ADD.W	#1,TXTPROG
 		SUB.W	#19,TXTLINE
-		
+		MOVE.L	#VRAMWRITE+(((PLANE_W+$5B0)&$3FFF)<<16)+(((PLANE_W+$5B0)&$C000)>>14),	VDPCTRL
+		MOVE.W	#$6102,	VDPDATA
 		move.l	#1,	d2
 	@scrup:
 		MOVE.B	#4,	TXTWAIT
