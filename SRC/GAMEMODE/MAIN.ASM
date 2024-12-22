@@ -85,11 +85,6 @@ startposY	=	11
 	@loopwindow:
 		MOVE.B	#1,	(VBLANKCMD).W
 		jsr		VSYNC
-	;	btst	#bitC,	JOYPADPRESS
-	;	beq.s	@no2
-	;	move.b	#$A0,	D0
-	;	jsr		PlaySound
-	;	bra.w	@windowoff
 	@no2:
 		SUB.B	#1,	TXTWAIT
 		MOVE.W	#TXTIDS,	A0	;	get the text pointer
@@ -99,7 +94,7 @@ startposY	=	11
 		ADD.W	TXTPROG,A0
 		
 		CMPI.B	#EX,(A0)	;	exit test
-		BEQ.S	@loopwindow
+		BEQ.S	@windowoff
 		
 		CMPI.B	#CN,(A0)	;	continue test
 		BNE.S	@nocont
@@ -131,6 +126,12 @@ startposY	=	11
 		bra.w	@loopwindow
 ;	===============================================
 	@windowoff:
+		MOVE.B	#1,	(VBLANKCMD).W
+		jsr		VSYNC
+		btst	#bitC,	JOYPADPRESS
+		beq.s	@windowoff
+		move.b	#$A0,	D0
+		jsr		PlaySound
 		MOVE.W	#$9200,(VDPCTRL)      ;	WINDOW PLANE VERTICAL
 		bra.w	@loop
 ;	===============================================
@@ -220,7 +221,7 @@ TXTTST:
 	dc.b	"2 is actually a   ",SL
 	dc.b	"reskin of a game  ",SL
 	dc.b	"called Doki Doki  ",SL
-	dc.b	"Panic?            ",CB
+	dc.b	"Panic?            ",EX
 	dc.b	"Pretty cool right?",EX
 	even
 TXTTST2:
